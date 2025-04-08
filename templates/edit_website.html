@@ -1,0 +1,54 @@
+{% extends 'dashboard.html' %}
+
+{% block main_content %}
+<div class="container mt-5 shadow p-4 bg-white rounded-4">
+    <h2 class="mb-4 text-primary fw-bold"><i class="fas fa-edit"></i> Edit Website</h2>
+
+
+    {% if messages %}
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1055;" id="custom-alerts">
+        {% for message in messages %}
+        <div 
+            class="alert alert-dismissible fade show shadow text-white" 
+            role="alert"
+            style="
+                background-color: {% if message.tags == 'success' %}#006400{% elif message.tags == 'error' or message.tags == 'danger' %}#8B0000{% else %}#0d6efd{% endif %};
+                border: none;">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    
+    
+    
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const alerts = document.querySelectorAll('#custom-alerts .alert');
+            alerts.forEach(alert => {
+                setTimeout(() => {
+                    const bsAlert = new bootstrap.Alert(alert);
+                    bsAlert.close(); // This uses Bootstrap's native method
+                }, 3000);
+            });
+        });
+    </script>
+
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group mb-3">
+            <label for="title" class="form-label fw-semibold"><i class="fas fa-heading"></i> Website Title</label>
+            <input type="text" class="form-control" name="title" value="{{ website.title }}" required>
+        </div>
+
+        <div class="form-group mb-4">
+            <label for="content" class="form-label fw-semibold"><i class="fas fa-align-left"></i> Website Content</label>
+            <textarea class="form-control" name="content" rows="6" required>
+{{ website.content.generated|default_if_none:'' }}
+            </textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary px-4"><i class="fas fa-save"></i> Update</button>
+    </form>
+</div>
+{% endblock %}
